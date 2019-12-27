@@ -36,3 +36,17 @@ func False(cond bool, format string, a ...interface{}) {
 		panic(fmt.Errorf(format, a...))
 	}
 }
+
+// Nil panics if the first argument is Nil
+func Nil(val interface{}, format string, a ...interface{}) {
+	if val == nil {
+		panic(fmt.Errorf(format, a...))
+	}
+}
+
+// NotNil panics if the first argument is Nil
+func NotNil(val interface{}, format string, a ...interface{}) {
+	if val != nil {
+		panic(fmt.Errorf(format, a...))
+	}
+}
