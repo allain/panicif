@@ -27,12 +27,31 @@ func Test_False(t *testing.T) {
 
 func Test_Nil(t *testing.T) {
 	ft := ftest.New(t)
+	var foo interface{}
+	ft.PanicsSubstr(func() { panicif.Nil(foo, "Foo") }, "Foo")
 	ft.PanicsSubstr(func() { panicif.Nil(nil, "Foo") }, "Foo")
+	ft.PanicsSubstr(func() { panicif.Nil((*struct{})(nil), "Foo") }, "Foo")
 	ft.PanicsSubstr(func() { panicif.Nil(nil, "Foo %s", "bar") }, "Foo bar")
 }
 
 func Test_NotNil(t *testing.T) {
 	ft := ftest.New(t)
-	ft.PanicsSubstr(func() { panicif.NotNil(true, "Foo") }, "Foo")
+	var foo interface{}
+	foo = 33
+
+	ft.PanicsSubstr(func() { panicif.NotNil(foo, "Foo") }, "Foo")
+	ft.PanicsSubstr(func() { panicif.NotNil(&struct{}{}, "Foo") }, "Foo")
+	ft.PanicsSubstr(func() { panicif.NotNil("not nill", "Foo") }, "Foo")
+
+	foo = nil
+	var err interface{}
+	func() {
+		defer func() {
+			err = recover()
+		}()
+		panicif.NotNil(foo, "Foo")
+		panicif.NotNil((*struct{})(nil), "Foo")
+	}()
+	ft.Nil(err)
 	ft.PanicsSubstr(func() { panicif.NotNil(false, "Foo %s", "bar") }, "Foo bar")
 }
